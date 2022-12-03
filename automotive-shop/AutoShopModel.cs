@@ -8,7 +8,7 @@ namespace automotive_shop
     {
         public const decimal OilChange = 29.99m;
         public const decimal LubeJob = 18.99m;
-        public const decimal TaxRate = 0.033m;
+        public const decimal TaxRate = 0.073m;
     }
     class AutoShopModel : INotifyPropertyChanged
     {
