@@ -1,4 +1,6 @@
-You mention "the _logic_ of the selected services..." and this phrase is really insightful. Consider that you can deal with that _logic_ separately from the _view_ (i.e. `Form`) that allows interaction with that logic. It's clear enough that when any property changes it cause effects in certain other properties. One option is to put your "business logic" in non-UI class that models the behavior that you want, and make the properties smart enough to send notification events when they change. For example, if the dollar amount for `Parts` is changed, it triggers a recalculation of `Tax` and new value for `Tax` it triggers a recalculation of the total fees.
+You mention "the _logic_ of the selected services..." and this phrase is insightful! Consider that one approach is to separate that logic from the _view_ (i.e. the `Form` that allows interaction with that logic). It's clear enough that when any property changes it cause effects in certain other properties and the behavior is well-defined. If this "business logic" is placed in a non-UI class that models the desired behavior, the properties can be made smart enough to send notification events when they change. 
+
+For example, if the dollar amount for `Parts` is changed, it triggers a recalculation of `Tax` and the new value for `Tax` it triggers a recalculation of the `TotelFees` property in turn.
 
     class AutoShopModel : INotifyPropertyChanged
     {
@@ -33,7 +35,7 @@ You mention "the _logic_ of the selected services..." and this phrase is really 
         .
     }
 
-    As you can see, the model is smart enough to adjust itself so that all of the values are in a consistent state no matter what property gets changed. Synchronizing the changes to the UI is a simple matter of binding controls like `CheckBox` and `TextBox` to properties in the model that have been set up to be *bindable*. For example, the `OilChange` property is just a bool:
+This demonstrates that the model is smart enough to maintain the relative values in a consistent internal state regardless of which property changes. Then, synchronizing the changes to the UI is a simple matter of binding controls like `CheckBox` and `TextBox` to properties in the model that have been set up to be *bindable*. For example, the `OilChange` property is just a bool:
 
     partial class AutoShopModel
     {
@@ -55,7 +57,7 @@ You mention "the _logic_ of the selected services..." and this phrase is really 
         .
     }
 
-    Finally, the glue that holds it all together takes place in the Load method of the `MainForm` where the `checkBoxOilChange` gets bound to changes of the `AutoShopModel.OilChange` boolean:
+Finally, the glue that holds it all together takes place in the Load method of the `MainForm` where the `checkBoxOilChange` gets bound to changes of the `AutoShopModel.OilChange` boolean:
 
     
     public partial class MainForm : Form
