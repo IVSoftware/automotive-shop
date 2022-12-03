@@ -35,7 +35,9 @@ For example, if the dollar amount for `Parts` is changed, it triggers a recalcul
         .
     }
 
-This demonstrates that the model is smart enough to maintain the relative values in a consistent internal state regardless of which property changes. Then, synchronizing the changes to the UI is a simple matter of binding controls like `CheckBox` and `TextBox` to properties in the model that have been set up to be *bindable*. For example, the `OilChange` property is just a bool:
+This demonstrates that the model is smart enough to maintain the relative values in a consistent internal state regardless of which property changes. Then, synchronizing the changes to the UI is a simple matter of binding controls like `CheckBox` and `TextBox` to properties in the model that have been set up to be *bindable*. 
+
+For example, the `OilChange` property is just a bool and making it bindable simply means firing an event when its value changes:
 
     partial class AutoShopModel
     {
@@ -70,10 +72,13 @@ Finally, the glue that holds it all together takes place in the Load method of t
             Binding binding;
             binding = new Binding(nameof(CheckBox.Checked), AutoShopModel, nameof(AutoShopModel.OilChange), false, DataSourceUpdateMode.OnPropertyChanged);
             checkBoxOilChange.DataBindings.Add(binding);
+            .
+            .
+            .
         }
         AutoShopModel AutoShopModel { get; } = new AutoShopModel();
     }
 
-    As a bonus, when you go to make the Android or iOS version of your app, the `AutoShopModel` is portable and reusable because it doesn't reference any platform-specific UI elements. If you're inclined to play around with this View-Model idea, I put together a short demo.
+As a bonus, when you go to make the Android or iOS version of your app, the `AutoShopModel` is portable and reusable because it doesn't reference any platform-specific UI elements. If you're inclined to play around with this View-Model idea, I put together a short demo.
 
 ![Screenshot](https://github.com/IVSoftware/automotive-shop/blob/master/automotive-shop/Screenshots/screenshot.png)
