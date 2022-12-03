@@ -1,15 +1,53 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace automotive_shop
 {
+    static class Price
+    {
+        public const decimal OilChange = 29.99m;
+        public const decimal LubeJob = 18.99m;
+        public const decimal TaxRate = 0.033m;
+    }
     class AutoShopModel : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            switch (propertyName)
+            {
+                case nameof(Parts):
+                    recalcTax();
+                    break;
+                case nameof(StandardServiceCharges):
+                case nameof(Tax):
+                case nameof(Labor):
+                    recalcTotalFees();
+                    break;
+                default:
+                    recalcStandardServiceCharges();
+                    break;
+            }
+        }
+        private void recalcTax() => Tax = Parts * Price.TaxRate;
+
+        private void recalcTotalFees() =>
+            TotalFees =
+                StandardServiceCharges +
+                Parts +
+                Labor +
+                Tax;
+                
+        private void recalcStandardServiceCharges()
+        {
+            decimal tmp = 0;
+            if (OilChange) tmp += Price.OilChange;
+            if (LubeJob) tmp += Price.LubeJob;
+            StandardServiceCharges = tmp;
+        }
+
         bool _oilChange = false;
         public bool OilChange
         {
@@ -36,72 +74,6 @@ namespace automotive_shop
                 }
             }
         }
-        bool _radiatorFlush = false;
-        public bool RadiatorFlush
-        {
-            get => _radiatorFlush;
-            set
-            {
-                if (!Equals(_radiatorFlush, value))
-                {
-                    _radiatorFlush = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        bool _transmissionFlush = false;
-        public bool TransmissionFlush
-        {
-            get => _transmissionFlush;
-            set
-            {
-                if (!Equals(_transmissionFlush, value))
-                {
-                    _transmissionFlush = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        bool _inspection = false;
-        public bool Inspection
-        {
-            get => _inspection;
-            set
-            {
-                if (!Equals(_inspection, value))
-                {
-                    _inspection = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        bool _replaceMuffler = false;
-        public bool ReplaceMuffler
-        {
-            get => _replaceMuffler;
-            set
-            {
-                if (!Equals(_replaceMuffler, value))
-                {
-                    _replaceMuffler = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        bool _tireRotation = false;
-        public bool TireRotation
-        {
-            get => _tireRotation;
-            set
-            {
-                if (!Equals(_tireRotation, value))
-                {
-                    _tireRotation = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
         decimal _parts = 0;
         public decimal Parts
         {
@@ -115,7 +87,6 @@ namespace automotive_shop
                 }
             }
         }
-
         decimal _labor = 0;
         public decimal Labor
         {
@@ -129,26 +100,49 @@ namespace automotive_shop
                 }
             }
         }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        decimal _standardServiceCharges = 0;
+        public decimal StandardServiceCharges
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            recalc();
+            get => _standardServiceCharges;
+            set
+            {
+                if (!Equals(_standardServiceCharges, value))
+                {
+                    _standardServiceCharges = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
-        private readonly PropertyInfo[] _properties = typeof(AutoShopModel).GetProperties();
-        private void recalc()
+        internal void Clear()
         {
-            foreach (var propertyInfo in _properties)
+            OilChange = LubeJob = false;
+            Parts = Labor = 0m;
+        }
+
+        decimal _tax = 0;
+        public decimal Tax
+        {
+            get => _tax;
+            set
             {
-                var name = propertyInfo.Name;
-                switch (propertyInfo.Name)
+                if (!Equals(_tax, value))
                 {
-                    default:
-                        Debug.Assert(false, $"The '{name}' property has not been handled.");
-                        break;
+                    _tax = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        decimal _totalFees = 0;
+        public decimal TotalFees
+        {
+            get => _totalFees;
+            set
+            {
+                if (!Equals(_totalFees, value))
+                {
+                    _totalFees = value;
+                    OnPropertyChanged();
                 }
             }
         }
