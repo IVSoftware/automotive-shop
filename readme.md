@@ -74,4 +74,4 @@ You mention "the _logic_ of the selected services..." and this phrase is really 
 
     As a bonus, when you go to make the Android or iOS version of your app, the `AutoShopModel` is portable and reusable because it doesn't reference any platform-specific UI elements. If you're inclined to play around with this View-Model idea, I put together a short demo.
 
-    ![Screenshot](https://github.com/IVSoftware/automotive-shop/blob/master/automotive-shop/Screenshots/screenshot.png)
+![Screenshot](https://github.com/IVSoftware/automotive-shop/blob/master/automotive-shop/Screenshots/screenshot.png)
